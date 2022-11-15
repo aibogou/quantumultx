@@ -2,37 +2,8 @@ const title = "米游社";
 const subTitleNew = "首次添加";
 const subTitleUpdate = "更新";
 var cookie = "";
-const urlMap = {
-    //角色信息
-
-    //签到
-    sign: {
-        url: 'https://api-takumi.mihoyo.com/event/bbs_sign_reward/sign',
-        body: {uid: this.uid,region: 'cn_gf01',act_id: 'e202009291139501' },
-        method: 'POST',
-        sign: true
-    },
-    //签到信息
-    resign_info: {
-        url: 'https://api-takumi.mihoyo.com/event/bbs_sign_reward/info',
-        method: 'GET',
-        query: `uid=${uid}&region=cn_gf01&act_id=e202009291139501`
-    },
-    //补签
-    resign: {
-        url: 'https://api-takumi.mihoyo.com/event/bbs_sign_reward/resign',
-        body: {uid: this.uid,region: 'cn_gf01',act_id: 'e202009291139501' },
-        method: 'POST',
-        sign: true
-    },
-    //补签信息
-    resign_info: {
-        url: 'https://api-takumi.mihoyo.com/event/bbs_sign_reward/resign_info',
-        method: 'GET',
-        query: `uid=${uid}&region=cn_gf01&act_id=e202009291139501`
-    }
-
-}
+var uid = "";
+var region = "";
 const infoUrl = "https://api-takumi.mihoyo.com/binding/api/getUserGameRoles?action_ticket=rEcgcuebzFmcFrCif8I5SvbmmxKe3gQenMTrv3Lm&game_biz=hk4e_cn`;";
 const myRequest = {
     url: sign,
@@ -52,6 +23,9 @@ async() => {
 };
 function init(){
     cookie = $prefs.valueForKey("mihoyoCookie");
+    let role = getGameRole(cookie);
+    uid = role.uid;
+    region = role.region;
 }
 function getCookie(){
     var cookie = $request.headers.Cookie;
@@ -75,7 +49,55 @@ function sign(){
         console.log(reason.error);
     });
 }
+function getGameRole(cookie){
+    let url = 'https://api-takumi.mihoyo.com/binding/api/getUserGameRolesByCookie?game_biz=hk4e_cn'
+    let request = {
+        method: 'GET',
+        headers: {
+            Cookie: cookie
+        },
+        url: url
+      }
+      $task.fetch(request).then(response => {
+        let uid = response.body.data.list[0].game_uid;
+        let region = response.body.data.list[0].region;
+        return {uid,region} = {}
+    }, reason => {
+        console.log(reason.error);
+    });
+}
 function getData(type){
+    var urlMap = {
+        //角色信息
+    
+        //签到
+        sign: {
+            url: 'https://api-takumi.mihoyo.com/event/bbs_sign_reward/sign',
+            body: {uid: uid,region: 'cn_gf01',act_id: 'e202009291139501' },
+            method: 'POST',
+            sign: true
+        },
+        //签到信息
+        resign_info: {
+            url: 'https://api-takumi.mihoyo.com/event/bbs_sign_reward/info',
+            method: 'GET',
+            query: `uid=${uid}&region=cn_gf01&act_id=e202009291139501`
+        },
+        //补签
+        resign: {
+            url: 'https://api-takumi.mihoyo.com/event/bbs_sign_reward/resign',
+            body: {uid: uid,region: 'cn_gf01',act_id: 'e202009291139501' },
+            method: 'POST',
+            sign: true
+        },
+        //补签信息
+        resign_info: {
+            url: 'https://api-takumi.mihoyo.com/event/bbs_sign_reward/resign_info',
+            method: 'GET',
+            query: `uid=${uid}&region=cn_gf01&act_id=e202009291139501`
+        }
+    
+    }
     let{url,query,body,sign,method} = urlMap[type];
     if(query) url += `?${query}`;
     if(body) body = JSON.stringify(body);
