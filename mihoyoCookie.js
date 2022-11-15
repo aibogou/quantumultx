@@ -1,10 +1,42 @@
 const title = "米游社";
 const subTitleNew = "首次添加";
 const subTitleUpdate = "更新";
+const signUrl = "https://api-takumi.mihoyo.com/event/bbs_sign_reward/resign";
+const infoUrl = "https://api-takumi.mihoyo.com/binding/api/getUserGameRoles?action_ticket=rEcgcuebzFmcFrCif8I5SvbmmxKe3gQenMTrv3Lm&game_biz=hk4e_cn`;";
+const SignHeaders = {
+    'Connection' : `keep-alive`,
+    'Accept-Encoding' : `gzip, deflate, br`,
+    'DS' : getDsSign(),
+    'x-rpc-device_id' : getGuid(),
+    'x-rpc-client_type' : `5`,
+    'Content-Type' : `application/json;charset=utf-8`,
+    'Origin' : `https://webstatic.mihoyo.com`,
+    'User-Agent' : `Mozilla/5.0 (iPhone; CPU iPhone OS 15_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) miHoYoBBS/2.38.1`,
+    'Host' : `api-takumi.mihoyo.com`,
+    'Referer' : `https://webstatic.mihoyo.com/`,
+    'x-rpc-app_version' : `2.38.1`,
+    'Accept-Language' : `zh-CN,zh-Hans;q=0.9`,
+    'Accept' : `application/json, text/plain, */*`
+    };
+const SignBody = `{"uid":"103075802","region":"cn_gf01","act_id":"e202009291139501"}`;
+const myRequest = {
+    url: sign,
+    method: 'POST',
+    headers: SignHeaders,
+    body: SignBody
+};
 async() => {
-    $notify("开始",'',"测试成功了");
-    getCookie();
-    $done();
+    // $notify("开始",'',"测试成功了");
+    // getCookie();
+    // $done();
+    $task.fetch(myRequest).then(response => {
+        console.log(response.statusCode + "\n\n" + response.body);
+        $notify("签到","签到成功");
+        $done();
+    }, reason => {
+        console.log(reason.error);
+        $done();
+    });
 };
 function getCookie(){
     var cookie = $request.headers.Cookie;
@@ -19,3 +51,36 @@ function getCookie(){
         $notify(title,subTitleNew,"添加cookie成功");
     }
 }
+function sign(){
+
+}
+
+function getDs (q = '', b = '') {
+    let n = ''
+    if (['cn_gf01', 'cn_qd01'].includes(this.server)) {
+      n = 'xV8v4Qu54lUKrEYFZkJhB8cuOh9Asafs'
+    } else if (['os_usa', 'os_euro', 'os_asia', 'os_cht'].includes(this.server)) {
+      n = 'okr4obncj8bw5a65hbnn5oo6ixjc3l9w'
+    }
+    let t = Math.round(new Date().getTime() / 1000)
+    let r = Math.floor(Math.random() * 900000 + 100000)
+    let DS = md5(`salt=${n}&t=${t}&r=${r}&b=${b}&q=${q}`)
+    return `${t},${r},${DS}`
+  }
+
+  /** 签到ds */
+function getDsSign () {
+    /** @Womsxd */
+    const n = 'Qqx8cyv7kuyD8fTw11SmvXSFHp7iZD29'
+    const t = Math.round(new Date().getTime() / 1000)
+    const r = lodash.sampleSize('abcdefghijklmnopqrstuvwxyz0123456789', 6).join('')
+    const DS = md5(`salt=${n}&t=${t}&r=${r}`)
+    return `${t},${r},${DS}`
+  }
+function getGuid () {
+    function S4 () {
+      return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1)
+    }
+
+    return (S4() + S4() + '-' + S4() + '-' + S4() + '-' + S4() + '-' + S4() + S4() + S4())
+  }
