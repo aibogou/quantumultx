@@ -1,24 +1,39 @@
 const title = "米游社";
 const subTitleNew = "首次添加";
 const subTitleUpdate = "更新";
-const signUrl = "https://api-takumi.mihoyo.com/event/bbs_sign_reward/resign";
+var cookie = "";
+const urlMap = {
+    //角色信息
+
+    //签到
+    sign: {
+        url: 'https://api-takumi.mihoyo.com/event/bbs_sign_reward/sign',
+        body: {uid: this.uid,region: 'cn_gf01',act_id: 'e202009291139501' },
+        method: 'POST',
+        sign: true
+    },
+    //签到信息
+    resign_info: {
+        url: 'https://api-takumi.mihoyo.com/event/bbs_sign_reward/info',
+        method: 'GET',
+        query: `uid=${uid}&region=cn_gf01&act_id=e202009291139501`
+    },
+    //补签
+    resign: {
+        url: 'https://api-takumi.mihoyo.com/event/bbs_sign_reward/resign',
+        body: {uid: this.uid,region: 'cn_gf01',act_id: 'e202009291139501' },
+        method: 'POST',
+        sign: true
+    },
+    //补签信息
+    resign_info: {
+        url: 'https://api-takumi.mihoyo.com/event/bbs_sign_reward/resign_info',
+        method: 'GET',
+        query: `uid=${uid}&region=cn_gf01&act_id=e202009291139501`
+    }
+
+}
 const infoUrl = "https://api-takumi.mihoyo.com/binding/api/getUserGameRoles?action_ticket=rEcgcuebzFmcFrCif8I5SvbmmxKe3gQenMTrv3Lm&game_biz=hk4e_cn`;";
-const signHeaders = {
-    'Connection' : `keep-alive`,
-    'Accept-Encoding' : `gzip, deflate, br`,
-    'DS' : getDsSign(),
-    'x-rpc-device_id' : getGuid(),
-    'x-rpc-client_type' : `5`,
-    'Content-Type' : `application/json;charset=utf-8`,
-    'Origin' : `https://webstatic.mihoyo.com`,
-    'User-Agent' : `Mozilla/5.0 (iPhone; CPU iPhone OS 15_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) miHoYoBBS/2.38.1`,
-    'Host' : `api-takumi.mihoyo.com`,
-    'Referer' : `https://webstatic.mihoyo.com/`,
-    'x-rpc-app_version' : `2.38.1`,
-    'Accept-Language' : `zh-CN,zh-Hans;q=0.9`,
-    'Accept' : `application/json, text/plain, */*`
-    };
-const signBody = `{"uid":"103075802","region":"cn_gf01","act_id":"e202009291139501"}`;
 const myRequest = {
     url: sign,
     method: 'POST',
@@ -26,23 +41,22 @@ const myRequest = {
     body: signBody
 };
 async() => {
-    // $notify("开始",'',"测试成功了");
-    // getCookie();
-    // $done();
-    signHeaders.Cookie = $prefs.valueForKey("mihoyoCookie");
-    $task.fetch(myRequest).then(response => {
-        console.log(response.statusCode + "\n\n" + response.body);
-        $notify("签到","签到成功");
-        $done();
-    }, reason => {
-        console.log(reason.error);
-        $done();
-    });
+    init();
+    if(cookie === "" || cookie === undefined){
+        console.log("未配置cookie，请先配置cookie");
+        getCookie();
+    }else{
+        sign();
+    }
+    $done();
 };
+function init(){
+    cookie = $prefs.valueForKey("mihoyoCookie");
+}
 function getCookie(){
     var cookie = $request.headers.Cookie;
     var currentCookie = $prefs.valueForKey("mihoyoCookie");
-    if(currentCookie != undefined){
+    if(currentCookie !== undefined){
         console.log("正在更新cookie。。。");
         $prefs.setValueForKey(cookie,"mihoyoCookie");
         $notify(title,subTitleUpdate,"更新cookie成功");
@@ -53,9 +67,22 @@ function getCookie(){
     }
 }
 function sign(){
-
+    let request = getData("sign");
+    $task.fetch(request).then(response => {
+        console.log(response.statusCode + "\n\n" + response.body);
+        $notify("签到","签到成功");
+    }, reason => {
+        console.log(reason.error);
+    });
 }
-
+function getData(type){
+    let{url,query,body,sign,method} = urlMap[type];
+    if(query) url += `?${query}`;
+    if(body) body = JSON.stringify(body);
+    let headers = getHeaders();
+    headers.Cookie = cookie;
+    return {url,body,headers,method}
+}
 function getDs (q = '', b = '') {
     let n = ''
     if (['cn_gf01', 'cn_qd01'].includes(this.server)) {
@@ -86,8 +113,26 @@ function getGuid () {
     return (S4() + S4() + '-' + S4() + '-' + S4() + '-' + S4() + '-' + S4() + S4() + S4())
   }
 function getRandomString(t,n){
-  a = t.length,
+  a = t.length;
   s = "";
   for (i = 0; i < n; i++) s += t.charAt(Math.floor(Math.random() * a));
   return s
+}
+function getHeaders(){
+    return {
+            'Connection' : `keep-alive`,
+            'Accept-Encoding' : `gzip, deflate, br`,
+            'DS' : getDsSign(),
+            'x-rpc-device_id' : getGuid(),
+            'x-rpc-client_type' : `5`,
+            'Content-Type' : `application/json;charset=utf-8`,
+            'Origin' : `https://webstatic.mihoyo.com`,
+            'User-Agent' : `Mozilla/5.0 (iPhone; CPU iPhone OS 15_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) miHoYoBBS/2.38.1`,
+            'Host' : `api-takumi.mihoyo.com`,
+            'Referer' : `https://webstatic.mihoyo.com/`,
+            'x-rpc-app_version' : `2.38.1`,
+            'Accept-Language' : `zh-CN,zh-Hans;q=0.9`,
+            'Accept' : `application/json, text/plain, */*`,
+            Cookie: $prefs.valueForKey("mihoyoCookie")
+        }
 }
