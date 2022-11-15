@@ -5,7 +5,6 @@ var cookie = "";
 var uid = "";
 var region = "";
 const infoUrl = "https://api-takumi.mihoyo.com/binding/api/getUserGameRoles?action_ticket=rEcgcuebzFmcFrCif8I5SvbmmxKe3gQenMTrv3Lm&game_biz=hk4e_cn";
-async() => {
     init();
     if(cookie === "" || cookie === undefined){
         console.log("未配置cookie，请先配置cookie");
@@ -14,7 +13,6 @@ async() => {
         sign();
     }
     $done();
-};
 function init(){
     cookie = $prefs.valueForKey("mihoyoCookie");
     let role = getGameRole(cookie);
@@ -58,6 +56,7 @@ function getGameRole(cookie){
       $task.fetch(request).then(response => {
         console.log("3..........")
         let uid = response.body.data.list[0].game_uid;
+        console
         let region = response.body.data.list[0].region;
         return {uid,region} = {uid,region}
     }, reason => {
@@ -153,6 +152,6 @@ function getHeaders(){
             'x-rpc-app_version' : `2.38.1`,
             'Accept-Language' : `zh-CN,zh-Hans;q=0.9`,
             'Accept' : `application/json, text/plain, */*`,
-            Cookie: $prefs.valueForKey("mihoyoCookie")
+            'Cookie': $prefs.valueForKey("mihoyoCookie")
         }
 }
