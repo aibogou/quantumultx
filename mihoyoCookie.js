@@ -1,4 +1,3 @@
-import lodash from 'lodash'
 const title = "米游社";
 const subTitleNew = "首次添加";
 const subTitleUpdate = "更新";
@@ -75,7 +74,7 @@ function getDsSign () {
     /** @Womsxd */
     const n = 'Qqx8cyv7kuyD8fTw11SmvXSFHp7iZD29'
     const t = Math.round(new Date().getTime() / 1000)
-    const r = lodash.sampleSize('abcdefghijklmnopqrstuvwxyz0123456789', 6).join('')
+    const r = getRandomString('abcdefghijklmnopqrstuvwxyz0123456789', 6).join('')
     const DS = md5(`salt=${n}&t=${t}&r=${r}`)
     return `${t},${r},${DS}`
   }
@@ -86,3 +85,9 @@ function getGuid () {
 
     return (S4() + S4() + '-' + S4() + '-' + S4() + '-' + S4() + '-' + S4() + S4() + S4())
   }
+function getRandomString(t,n){
+  a = t.length,
+  s = "";
+  for (i = 0; i < n; i++) s += t.charAt(Math.floor(Math.random() * a));
+  return s
+}
