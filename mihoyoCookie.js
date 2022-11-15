@@ -3,7 +3,7 @@ const subTitleNew = "首次添加";
 const subTitleUpdate = "更新";
 const signUrl = "https://api-takumi.mihoyo.com/event/bbs_sign_reward/resign";
 const infoUrl = "https://api-takumi.mihoyo.com/binding/api/getUserGameRoles?action_ticket=rEcgcuebzFmcFrCif8I5SvbmmxKe3gQenMTrv3Lm&game_biz=hk4e_cn`;";
-const SignHeaders = {
+const signHeaders = {
     'Connection' : `keep-alive`,
     'Accept-Encoding' : `gzip, deflate, br`,
     'DS' : getDsSign(),
@@ -18,17 +18,18 @@ const SignHeaders = {
     'Accept-Language' : `zh-CN,zh-Hans;q=0.9`,
     'Accept' : `application/json, text/plain, */*`
     };
-const SignBody = `{"uid":"103075802","region":"cn_gf01","act_id":"e202009291139501"}`;
+const signBody = `{"uid":"103075802","region":"cn_gf01","act_id":"e202009291139501"}`;
 const myRequest = {
     url: sign,
     method: 'POST',
-    headers: SignHeaders,
-    body: SignBody
+    headers: signHeaders,
+    body: signBody
 };
 async() => {
     // $notify("开始",'',"测试成功了");
     // getCookie();
     // $done();
+    signHeaders.Cookie = $prefs.valueForKey("mihoyoCookie");
     $task.fetch(myRequest).then(response => {
         console.log(response.statusCode + "\n\n" + response.body);
         $notify("签到","签到成功");
