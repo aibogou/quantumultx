@@ -4,6 +4,7 @@ const subTitleUpdate = "更新";
 !(async() => {
     $notify("开始",'',"测试成功了");
     getCookie();
+    $done();
 });
 function getCookie(){
     var cookie = $request.headers.Cookie;
