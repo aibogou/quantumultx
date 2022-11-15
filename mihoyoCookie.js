@@ -18,6 +18,7 @@ async() => {
 function init(){
     cookie = $prefs.valueForKey("mihoyoCookie");
     let role = getGameRole(cookie);
+    console.log("4..........")
     uid = role.uid;
     region = role.region;
 }
@@ -44,6 +45,7 @@ function sign(){
     });
 }
 function getGameRole(cookie){
+    console.log("1..........")
     let url = 'https://api-takumi.mihoyo.com/binding/api/getUserGameRolesByCookie?game_biz=hk4e_cn'
     let request = {
         method: 'GET',
@@ -52,10 +54,12 @@ function getGameRole(cookie){
         },
         url: url
       }
+      console.log("2..........")
       $task.fetch(request).then(response => {
+        console.log("3..........")
         let uid = response.body.data.list[0].game_uid;
         let region = response.body.data.list[0].region;
-        return {uid,region} = {}
+        return {uid,region} = {uid,region}
     }, reason => {
         console.log(reason.error);
     });
