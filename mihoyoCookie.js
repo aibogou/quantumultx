@@ -4,7 +4,7 @@ const subTitleUpdate = "更新";
 var cookie = "";
 var uid = "";
 var region = "";
-const infoUrl = "https://api-takumi.mihoyo.com/binding/api/getUserGameRoles?action_ticket=rEcgcuebzFmcFrCif8I5SvbmmxKe3gQenMTrv3Lm&game_biz=hk4e_cn`;";
+const infoUrl = "https://api-takumi.mihoyo.com/binding/api/getUserGameRoles?action_ticket=rEcgcuebzFmcFrCif8I5SvbmmxKe3gQenMTrv3Lm&game_biz=hk4e_cn";
 async() => {
     init();
     if(cookie === "" || cookie === undefined){
