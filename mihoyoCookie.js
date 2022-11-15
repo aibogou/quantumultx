@@ -5,12 +5,6 @@ var cookie = "";
 var uid = "";
 var region = "";
 const infoUrl = "https://api-takumi.mihoyo.com/binding/api/getUserGameRoles?action_ticket=rEcgcuebzFmcFrCif8I5SvbmmxKe3gQenMTrv3Lm&game_biz=hk4e_cn`;";
-const myRequest = {
-    url: sign,
-    method: 'POST',
-    headers: signHeaders,
-    body: signBody
-};
 async() => {
     init();
     if(cookie === "" || cookie === undefined){
